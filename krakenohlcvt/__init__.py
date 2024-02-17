@@ -157,4 +157,4 @@ class KrakenDataHandler:
         Parameters:
             df (pd.DataFrame): Kraken OHLCVT retrieved DataFrame object. Its index gets converted and returned.
         """
-	return pd.to_datetime(df.index, unit='s').tz_localize('UTC')
+        return pd.to_datetime(df.index, unit='s').tz_localize('UTC')
