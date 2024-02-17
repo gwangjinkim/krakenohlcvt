@@ -155,6 +155,6 @@ class KrakenDataHandler:
         Converts unix time to human-dreadable datetime (Krakenohlcvt data frame index is unix time).
         
         Parameters:
-            unixtimestamp (str): Kraken OHLCVT retrieved dataframes have unix time in their index.
+            unixtimestamp (str): Kraken OHLCVT retrieved dataframes have unix time in their index. You can however give df.index as argument (faster)
         """
         return pd.to_datetime(unixtimestamp, unit='s').tz_localize('UTC')

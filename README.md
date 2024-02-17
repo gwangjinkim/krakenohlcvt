@@ -50,7 +50,8 @@ df = kd.load_symbol_data("ETHUSDT", "15m")
 kd.save_to_df_pickle(symbol="ETHUSDT", timeframe="15m", outpath=os.path.expanduser("~/projects/python/LotusBot/src/backtester/ETHUSDT_15m.csv"), dropna_rows=True)
 
 # convert unix time in the index to human-readable datetime object
-map(kd.unix_to_datetime, df.index)
+[kd.unix_to_datetime(x) for x in df.index] # very slow! a lot faster:
+kd.unix_to_datetime(df.index)
 
 ```
 
