@@ -50,7 +50,7 @@ class KrakenDataHandler:
         list_symbols(starts_with=None, contains=None): Lists the trading symbols available in the zip file.
         load_symbol_data(symbol, timeframe): Loads OHLCVT data for a specified symbol and timeframe into a DataFrame.
         save_to_df_pickle(symbol, timeframe, outpath, dropna_rows=True): Saves the OHLCVT data for a specified symbol and timeframe into a DataFrame pickle.
-        convert_index(): Convert unix time  index into human-readable datetime objects.
+        unix_to_datetime(unixtimestamp): Convert unix time (index of load_symbol_data data frame) into human-readable datetime object.
     """
 
     def __init__(self, data_zipfile):
@@ -150,11 +150,11 @@ class KrakenDataHandler:
             outpath = f"{symbol}_{timeframe}.csv"
         df.to_pickle(outpath)
         
-    def convert_index(self, df):
+    def unix_to_datetime(self, unixtimestamp):
         """
-        Converts index of Kraken  OHLCVT data frame into human-dreadable datetime objects (it is in Unix time).
+        Converts unix time to human-dreadable datetime (Krakenohlcvt data frame index is unix time).
         
         Parameters:
-            df (pd.DataFrame): Kraken OHLCVT retrieved DataFrame object. Its index gets converted and returned.
+            unixtimestamp (str): Kraken OHLCVT retrieved dataframes have unix time in their index.
         """
-        return pd.to_datetime(df.index, unit='s').tz_localize('UTC')
+        return pd.to_datetime(unixtimestamp, unit='s').tz_localize('UTC')
