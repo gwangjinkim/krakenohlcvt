@@ -124,9 +124,9 @@ class KrakenDataHandler:
         with zipfile.ZipFile(self.data_zipfile) as zip_ref:
             with zip_ref.open(filename) as csvfile:
                 df = pd.read_csv(csvfile, header=None, index_col=0,
-                                 names=['timestamp', 'open', 'high', 'low', 'close', 'volume', 'T'])
+                                 names=['Timestamp', 'Open', 'High', 'Low', 'Close', 'Volume', 'T'])
                 # convert Unix timestamps to datetime objects
-                df['date'] = pd.to_datetime(df.index, unit='s').tz_localize('UTC')
+                df['Date'] = pd.to_datetime(df.index, unit='s').tz_localize('UTC')
                 
                 return df
     
