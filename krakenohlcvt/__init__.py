@@ -75,6 +75,8 @@ class KrakenDataHandler:
         Returns:
             list: A sorted list of unique symbols that meet the filtering criteria.
         """
+
+
         symbols = []
         with zipfile.ZipFile(self.data_zipfile) as zip_ref:
             for filename in zip_ref.namelist():
@@ -102,7 +104,8 @@ class KrakenDataHandler:
     def load_symbol_data(self, symbol, timeframe):
         """
         Loads the OHLCVT data for a specified symbol and timeframe from the zipped file into a pandas DataFrame.
-
+        The timestamps are Unix timestamps.
+	
         Parameters:
             symbol (str): The trading symbol to load data for.
             timeframe (str): The timeframe for the data, e.g., '15m' for 15 minutes.
@@ -120,9 +123,11 @@ class KrakenDataHandler:
         filename = f"{symbol}_{timeframe_mins}.csv"
         with zipfile.ZipFile(self.data_zipfile) as zip_ref:
             with zip_ref.open(filename) as csvfile:
-                df = pd.read_csv(csvfile, header=None, parse_dates=[0], index_col=0,
+                df = pd.read_csv(csvfile, header=None, index_col=0,
                                  names=['timestamp', 'open', 'high', 'low', 'close', 'volume', 'T'])
-                # ... (Add necessary data preprocessing here)
+                # convert Unix timestamps to datetime objects
+                df['date'] = df.index.tz_localize('UTC')
+                
                 return df
     
     def save_to_df_pickle(self, symbol, timeframe, outpath=None, dropna_rows=True):
