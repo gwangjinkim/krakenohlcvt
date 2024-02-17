@@ -101,7 +101,7 @@ class KrakenDataHandler:
         timeframe_map = {'1m': 1, '15m': 15, '1h': 60, '1d': 1440}
         return timeframe_map.get(timeframe_str, None)
 
-    def load_symbol_data(self, symbol, timeframe):
+    def load_symbol_data(self, symbol, timeframe, with_date_col=False):
         """
         Loads the OHLCVT data for a specified symbol and timeframe from the zipped file into a pandas DataFrame.
         The timestamps are Unix timestamps.
@@ -109,7 +109,8 @@ class KrakenDataHandler:
         Parameters:
             symbol (str): The trading symbol to load data for.
             timeframe (str): The timeframe for the data, e.g., '15m' for 15 minutes.
-
+            with_date_col (bool): Add human readable date column? Note then the data frame is not a pure numeric table!
+        
         Returns:
             DataFrame: A pandas DataFrame containing the OHLCVT data.
 
@@ -125,8 +126,9 @@ class KrakenDataHandler:
             with zip_ref.open(filename) as csvfile:
                 df = pd.read_csv(csvfile, header=None, index_col=0,
                                  names=['Timestamp', 'Open', 'High', 'Low', 'Close', 'Volume', 'T'])
-                # convert Unix timestamps to datetime objects
-                df['Date'] = pd.to_datetime(df.index, unit='s').tz_localize('UTC')
+                
+                if with_date_col: # convert Unix timestamps to datetime objects
+                    df['Date'] = pd.to_datetime(df.index, unit='s').tz_localize('UTC')
                 
                 return df
     
