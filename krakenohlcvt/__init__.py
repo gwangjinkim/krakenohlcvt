@@ -126,7 +126,7 @@ class KrakenDataHandler:
                 df = pd.read_csv(csvfile, header=None, index_col=0,
                                  names=['timestamp', 'open', 'high', 'low', 'close', 'volume', 'T'])
                 # convert Unix timestamps to datetime objects
-                df['date'] = df.index.tz_localize('UTC')
+                df['date'] = pd.to_datetime(df.index, unit='s').tz_localize('UTC')
                 
                 return df
     
