@@ -174,7 +174,7 @@ class KrakenDataHandler:
         Usage:
           print(resample_dataframe("ETHUSDT", "15T"))
         """
-        df = self.load_symbol_data(self, symbol, "1m", True)
+        df = self.load_symbol_data(symbol, "1m", True)
         if not isinstance(df.index, pd.DatetimeIndex):
             df.index = pd.to_datetime(df.index, unit='s')  # Ensure index is in datetime format if it's not already
         # Default aggregation methods if not specified
