@@ -159,7 +159,7 @@ class KrakenDataHandler:
         """
         return pd.to_datetime(unixtimestamp, unit='s').tz_localize('UTC')
 
-    def load_resampling(symbol, timeframe, agg_dict=None):
+    def load_resampling(self, symbol, timeframe, agg_dict=None):
         """
         Load and resample 1-minute interval data to a specified timeframe (given in minutes).
 
