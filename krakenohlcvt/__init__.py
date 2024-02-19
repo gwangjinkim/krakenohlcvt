@@ -120,7 +120,8 @@ class KrakenDataHandler:
         """
         timeframe_mins = self.get_timeframe_mins(timeframe)
         if timeframe_mins is None:
-            df = self.load_resampling(symbol, timeframe)
+            if type(timeframe) is int:
+                df = self.load_resampling(symbol, timeframe)
 
         filename = f"{symbol}_{timeframe_mins}.csv"
         with zipfile.ZipFile(self.data_zipfile) as zip_ref:
@@ -165,14 +166,14 @@ class KrakenDataHandler:
 
         Parameters:
         - df: DataFrame to resample, indexed by datetime.
-        - timeframe: Desired new resampled timeframe as a string, e.g. '15T'.
+        - timeframe: Desired new resampled timeframe as minutes (in int).
         - agg_dict: Dictionary specifying how to aggregate each column. If None, defaults will be used.
 
         Returns:
         - Resampled DataFrame.
 
         Usage:
-          print(resample_dataframe("ETHUSDT", "15T"))
+          print(resample_dataframe("ETHUSDT", 30))
         """
         df = self.load_symbol_data(symbol, "1m", True)
         if not isinstance(df.index, pd.DatetimeIndex):
@@ -189,6 +190,6 @@ class KrakenDataHandler:
         
         # Return resampled and aggregated the DataFrame
         resampled_df = df.resample(timeframe).agg(agg_dict).dropna()
-        
+        # df.index is still in datetime format but should be re-transformed to unix time
         return resampled_df
 
