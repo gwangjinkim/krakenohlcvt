@@ -120,7 +120,7 @@ class KrakenDataHandler:
         """
         timeframe_mins = self.get_timeframe_mins(timeframe)
         if timeframe_mins is None:
-            df = self.load_resampling(symbol=symbol, timeframe=timeframe)
+            df = self.load_resampling(symbol, timeframe=timeframe)
 
         filename = f"{symbol}_{timeframe_mins}.csv"
         with zipfile.ZipFile(self.data_zipfile) as zip_ref:
