@@ -120,7 +120,7 @@ class KrakenDataHandler:
         """
         timeframe_mins = self.get_timeframe_mins(timeframe)
         if timeframe_mins is None:
-            df = self.load_resampling(symbol, timeframe=timeframe)
+            df = self.load_resampling(symbol, timeframe)
 
         filename = f"{symbol}_{timeframe_mins}.csv"
         with zipfile.ZipFile(self.data_zipfile) as zip_ref:
@@ -174,7 +174,7 @@ class KrakenDataHandler:
         Usage:
           print(resample_dataframe("ETHUSDT", "15T"))
         """
-        df = self.load_symbol_data(self, symbol, timeframe="1m", with_date_col=True)
+        df = self.load_symbol_data(self, symbol, "1m", with_date_col=True)
         if not isinstance(df.index, pd.DatetimeIndex):
             df.index = pd.to_datetime(df.index, unit='s')  # Ensure index is in datetime format if it's not already
         # Default aggregation methods if not specified
