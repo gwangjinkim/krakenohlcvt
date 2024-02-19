@@ -45,6 +45,9 @@ kd.list_symbols(starts_with="ETH")
 
 # then get the timeframe from the specific symbol
 df = kd.load_symbol_data("ETHUSDT", "15m")
+# if timeframe not in ["1m", "15m", "1h", "1d"], then the '1m' data gets loaded and the timeframe
+# inferred from the 1m data!
+
 
 # save a timeframe of a specific symbol as df pickle:
 kd.save_to_df_pickle(symbol="ETHUSDT", timeframe="15m", outpath=os.path.expanduser("~/projects/python/LotusBot/src/backtester/ETHUSDT_15m.csv"), dropna_rows=True)
@@ -52,6 +55,8 @@ kd.save_to_df_pickle(symbol="ETHUSDT", timeframe="15m", outpath=os.path.expandus
 # convert unix time in the index to human-readable datetime object
 [kd.unix_to_datetime(x) for x in df.index] # very slow! a lot faster:
 kd.unix_to_datetime(df.index)
+# also possible
+[datetime.datetime.fromtimestamp(x) for x in df.index]
 
 ```
 

@@ -120,7 +120,7 @@ class KrakenDataHandler:
         """
         timeframe_mins = self.get_timeframe_mins(timeframe)
         if timeframe_mins is None:
-            raise ValueError(f"Invalid timeframe: {timeframe}")
+            df = self.load_resampling(symbol=symbol, timeframe=timeframe)
 
         filename = f"{symbol}_{timeframe_mins}.csv"
         with zipfile.ZipFile(self.data_zipfile) as zip_ref:
@@ -158,3 +158,37 @@ class KrakenDataHandler:
             unixtimestamp (str): Kraken OHLCVT retrieved dataframes have unix time in their index. You can however give df.index as argument (faster)
         """
         return pd.to_datetime(unixtimestamp, unit='s').tz_localize('UTC')
+
+    def load_resampling(symbol, timeframe, agg_dict=None):
+        """
+        Load and resample 1-minute interval data to a specified timeframe (given in minutes).
+
+        Parameters:
+        - df: DataFrame to resample, indexed by datetime.
+        - timeframe: Desired new resampled timeframe as a string, e.g. '15T'.
+        - agg_dict: Dictionary specifying how to aggregate each column. If None, defaults will be used.
+
+        Returns:
+        - Resampled DataFrame.
+
+        Usage:
+          print(resample_dataframe("ETHUSDT", "15T"))
+        """
+        df = self.load_symbol_data(self, symbol, timeframe="1m", with_date_col=True)
+        if not isinstance(df.index, pd.DatetimeIndex):
+            df.index = pd.to_datetime(df.index, unit='s')  # Ensure index is in datetime format if it's not already
+        # Default aggregation methods if not specified
+        if agg_dict is None:
+            agg_dict = {
+                'Open': 'first',
+                'High': 'max',
+                'Low': 'min',
+                'Close': 'last',
+                'Volume': 'sum'
+            }
+        
+        # Return resampled and aggregated the DataFrame
+        resampled_df = df.resample(timeframe).agg(agg_dict).dropna()
+        
+        return resampled_df
+
