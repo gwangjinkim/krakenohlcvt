@@ -34,6 +34,7 @@ import zipfile
 import pandas as pd
 import re  # For regular expression matching
 import os  # to be able to use "~" for home
+import platform # to distinguish MacOS
 
 class KrakenDataHandler:
 
@@ -63,7 +64,10 @@ class KrakenDataHandler:
         """
         
         self.data_zipfile = data_zipfile
-        self.symbol_pattern = re.compile(r'^(.*)_(?P<timeframe>\d+)\.csv$')
+        if platform.system() == "Darwin":
+            self.symbol_pattern = re.compile(r'^Kraken_OHLCVT/(.*)_(?P<timeframe>\d+)\.csv$')
+        else:
+            self.symbol_pattern = re.compile(r'^(.*)_(?P<timeframe>\d+)\.csv$')
 
     def list_symbols(self, starts_with=None, contains=None):
         """
@@ -123,7 +127,10 @@ class KrakenDataHandler:
             if type(timeframe) is int:
                 df = self.load_resampling(symbol, timeframe)
 
-        filename = f"{symbol}_{timeframe_mins}.csv"
+        if platform.system() == "Darwin":
+            filename = f"Kraken_OHLCVT/{symbol}_{timeframe_mins}.csv"
+        else:
+            filename = f"{symbol}_{timeframe_mins}.csv"
         with zipfile.ZipFile(self.data_zipfile) as zip_ref:
             with zip_ref.open(filename) as csvfile:
                 df = pd.read_csv(csvfile, header=None, index_col=0,
