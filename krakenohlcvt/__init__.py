@@ -64,10 +64,8 @@ class KrakenDataHandler:
         """
         
         self.data_zipfile = data_zipfile
-        if platform.system() == "Darwin":
-            self.symbol_pattern = re.compile(r'^Kraken_OHLCVT/(.*)_(?P<timeframe>\d+)\.csv$')
-        else:
-            self.symbol_pattern = re.compile(r'^(.*)_(?P<timeframe>\d+)\.csv$')
+        self.old_symbol_pattern = re.compile(r'^Kraken_OHLCVT/(.*)_(?P<timeframe>\d+)\.csv$')
+        self.symbol_pattern = re.compile(r'^(.*)_(?P<timeframe>\d+)\.csv$')
 
     def list_symbols(self, starts_with=None, contains=None):
         """
@@ -85,7 +83,10 @@ class KrakenDataHandler:
         symbols = []
         with zipfile.ZipFile(self.data_zipfile) as zip_ref:
             for filename in zip_ref.namelist():
-                match = self.symbol_pattern.match(filename)
+                if filename.startswith("Kraken_OHLCVT"):
+                    match = self.old_symbol_pattern.match(filename)
+                else:
+                    match = self.symbol_pattern.match(filename)
                 if match:
                     symbol = match.group(1)
                     if (starts_with is None or symbol.startswith(starts_with)) and \
