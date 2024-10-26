@@ -46,7 +46,8 @@ class KrakenDataHandler:
 
     Attributes:
         data_zipfile (str): The path to the zipped OHLCVT data file from Kraken.
-
+        use_old_pattern (bool): Old pattern r'^Kraken_OHLCVT/(.*)_(?P<timeframe>\d+)\.csv$' has to be used?
+    
     Methods:
         list_symbols(starts_with=None, contains=None): Lists the trading symbols available in the zip file.
         load_symbol_data(symbol, timeframe): Loads OHLCVT data for a specified symbol and timeframe into a DataFrame.
@@ -85,8 +86,10 @@ class KrakenDataHandler:
             for filename in zip_ref.namelist():
                 if filename.startswith("Kraken_OHLCVT"):
                     match = self.old_symbol_pattern.match(filename)
+                    self.use_old_pattern = True
                 else:
                     match = self.symbol_pattern.match(filename)
+                    self.use_old_pattern = False
                 if match:
                     symbol = match.group(1)
                     if (starts_with is None or symbol.startswith(starts_with)) and \
@@ -128,7 +131,7 @@ class KrakenDataHandler:
             if type(timeframe) is int:
                 df = self.load_resampling(symbol, timeframe)
 
-        if platform.system() == "Darwin":
+        if use_old_pattern:
             filename = f"Kraken_OHLCVT/{symbol}_{timeframe_mins}.csv"
         else:
             filename = f"{symbol}_{timeframe_mins}.csv"
